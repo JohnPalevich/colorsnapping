@@ -24,22 +24,18 @@ def color_snap(pixel:(int)) -> (int):
     return COLOR_DICT[cColor]
 
 def run():
-    tests = ['test1.png', 'test2.png', 'test3.png', 'test4.png', 'test5.png', 'test6.png', 'test7.png', 'red.jpg']
+    tests = ['test1.png', 'test2.png', 'test3.png', 'test4.png', 'test5.png', 'test6.png', 'test7.png', 'red.jpg', 'batman.png']
     for test in tests:
         print(test)
         count = Counter()
-        im = Image.open(test, 'r')
+        im = Image.open('testimages/' + test, 'r')
         pix_val = list(im.getdata())
         for val in pix_val:
             if len(val) == 3:
                 count[color_snap(val)] += 1
             elif val[3] == 255:
                 count[color_snap(val)] += 1
-        if len(count.keys()) >= 5:
-            top2 = count.most_common(5)
-            print(top2[2][0] +  ', ' + top2[3][0] + ', ' + top2[4][0])
-        else:
-            print(count)
+        print(count)
 
 if __name__ == '__main__':
     run()
