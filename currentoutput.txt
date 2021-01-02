@@ -1,0 +1,18 @@
+1.png
+[('Red', 8811), ('White', 3606), ('Purple', 1396)]
+2.png
+[('White', 8750), ('Red', 3134), ('Orange', 3021)]
+3.png
+[('Red', 4664), ('Blue', 4257), ('Orange', 2209)]
+4.png
+[('White', 6669), ('Blue', 3623), ('Purple', 2876)]
+5.png
+[('Purple', 5467), ('Red', 3724), ('Yellow', 3585)]
+6.png
+[('Purple', 12204), ('Red', 6123), ('Yellow', 1071)]
+7.png
+[('Red', 10657), ('Blue', 8050), ('White', 877)]
+8.png
+[('Black', 27921), ('Gray', 2427), ('Purple', 1934)]
+9.png
+[('Black', 12402), ('White', 12211), ('Gray', 5212)]

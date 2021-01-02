@@ -1,0 +1,20 @@
+Black:Black
+Gray:Gray
+Silver:Gray
+White:White
+Tan:Tan
+Yellow:Yellow
+Gold:Yellow
+Orange:Orange
+Red:Red
+Dark Red:Red
+Magenta:Pink
+Light Green:Green
+Green:Green
+Olive Green:Dark Green
+Blue Green:Blue,Green
+Light Blue:Blue
+Blue:Blue
+Dark Blue:Blue
+Indigo:Purple
+Purple:Purple
