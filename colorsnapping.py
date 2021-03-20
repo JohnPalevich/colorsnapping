@@ -6,10 +6,12 @@ COLOR_DICT = {(255,51,51):'Red', (255,128,0):'Orange', (255,255,0):'Yellow', (0,
               (0,255,255):'Dark Blue', (127,0,255):'Purple',(255,0,255):'Magenta', (255,51,153):'Pink', (128,128,128):'Gray',
               (0,0,0):'Black', (255,255,255):'White'}
 
-COLOR_DICT_V2 = {(0,0,0):'Black',(255,255,255):'White',(255,0,0):'Red',(0,255,0):'Light Green',(0,0,255):'Blue',(255,255,0):'Yellow',
-                 (255,215,0):'Gold',(0,255,255):'Light Blue',(255,140,0):'Orange',(255,0,255):'Magenta',(75,0,130):'Indigo',
-                 (191,191,191):'Silver',(128,128,128):'Gray',(128,0,0):'Dark Red',(0,128,0):'Green',
-                 (220,202,152):'Tan',(128,0,128):'Purple',(0,128,128):'Blue Green',(0,0,128):'Dark Blue'}
+COLOR_DICT_V2 = {(255,0,0):'Red',(0,255,0):'Light Green',(0,0,255):'Blue',(255,255,0):'Yellow', (255,215,0):'Gold',
+                 (0,255,255):'Light Blue',(255,140,0):'Orange',(255,0,255):'Magenta',(75,0,130):'Indigo',
+                 (128,0,0):'Dark Red',(0,128,0):'Green', (220,202,152):'Tan',(128,0,128):'Purple',
+                 (0,128,128):'Blue Green',(0,0,128):'Dark Blue'}
+
+NO_SAT = {(0,0,0):'Black',(255,255,255):'White', (191,191,191):'Silver',(128,128,128):'Gray'}
 
 PAIRED_COLORS = {'Black': ['Gray'], 'Gray': ['Black', 'Silver'], 'Silver': ['Gray'], 'White': ['Silver', 'Tan'],
                  'Tan': ['Yellow'], 'Yellow': ['Tan', 'Gold'], 'Gold': ['Orange', 'Yellow '], 'Orange': ['Gold', 'Red'],
@@ -32,11 +34,25 @@ def lab_conversion(c1:(int), c2:(int))-> float:
     b = c1[2] - c2[2]
     return (2+rmean/256)*r*r + 4*g*g + (2+(255-rmean)/256)*b*b
 
-def color_snap(pixel:(int)) -> (int):
-    global COLOR_DICT_V2
+def sat_conversion(c1:(int))-> float:
+    rprime = c1[0] / 255
+    gprime = c1[1] / 255
+    bprime = c1[2] / 255
+    cMax = max(rprime, gprime, bprime)
+    cMin = min(rprime, gprime, bprime)
+    dC = cMax - cMin
+    lightness = cMax + cMin / 2
+    if dC == 0:
+        return 0.0
+    else:
+        if (1-abs(2*lightness-1)) == 0:
+            return 1
+        return dC/(1-abs(2*lightness-1))
+
+def color_snap(pixel:(int), d:{}) -> (int):
     sDist = 10000000
     cColor = -1
-    for color in COLOR_DICT_V2.keys():
+    for color in d.keys():
         dist = lab_conversion(color, pixel)
         if dist < sDist:
             sDist = dist
@@ -55,6 +71,7 @@ def collapse_counter(count:Counter) -> [()]:
 
 def run():
     global COLOR_DICT_V2
+    global NO_SAT
     tests = ['1.png','2.png','3.png','4.png','5.png','6.png','7.png', '8.png', '9.png']
     for test in tests:
         print(test)
@@ -65,11 +82,21 @@ def run():
         nList = []
         for val in pix_val:
             if len(val) == 3:
-                c = color_snap(val)
+                if sat_conversion(val) < 0.15:
+                    c = color_snap(val, NO_SAT)
+                    count[NO_SAT[c]] += 1
+                else:
+                    c = color_snap(val, COLOR_DICT_V2)
+                    count[COLOR_DICT_V2[c]] += 1
                 nList.append(c)
-                count[COLOR_DICT_V2[c]] += 1
             elif val[3] == 255:
-                c = color_snap(val)
+                if sat_conversion(val) < 0.15:
+                    c = color_snap(val, NO_SAT)
+                    count[NO_SAT[c]] += 1
+                else:
+                    c = color_snap(val, COLOR_DICT_V2)
+                    count[COLOR_DICT_V2[c]] += 1
+                nList.append(c)
                 #Code For Producing the Image Without Black or Gray in it.
                 '''
                 if COLOR_DICT_V2[c] == 'Black' or COLOR_DICT_V2[c]=='Gray':
@@ -77,8 +104,6 @@ def run():
                 else:
                     nList.append(c)
                 '''
-                nList.append(c)
-                count[COLOR_DICT_V2[c]] += 1
             else:
                 nList.append(val)
         percent_black = (count['Black']+count['Gray'])/ sum(count.values())
@@ -91,8 +116,8 @@ def run():
 
         #Code for Saving image
 
-        #im2.putdata(nList)
-        #im2.save('outputcd2/'+test)
+        im2.putdata(nList)
+        im2.save('outputcd3/'+test)
 
 
 if __name__ == '__main__':
